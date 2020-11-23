@@ -1,0 +1,5 @@
+numpy==1.19.3
+opencv-python
+progressbar2==3.53.1
+python-utils==2.4.0
+six==1.15.0
