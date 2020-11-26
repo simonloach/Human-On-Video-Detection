@@ -5,7 +5,7 @@ PUT_LABEL = True
 PUT_RECTANGLE = True
 MODEL = 'yolov3' 
 jump = 3
-DEBUG = 2
+DEBUG = -1
 
 
 #########################

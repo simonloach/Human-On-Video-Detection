@@ -18,7 +18,6 @@ class GUI:
                     [sg.In(), sg.FileBrowse()],
                     [sg.Open(), sg.Cancel()]]).read(close=True)
             try:
-                print(values)
                 if os.path.isfile(values[0]):
                     if values[0].lower().endswith(('.mpg', '.mp4')):
                         self.path_to_file = values[0]

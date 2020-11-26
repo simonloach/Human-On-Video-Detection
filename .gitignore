@@ -1,0 +1,10 @@
+/output/*.*
+/input/*.*
+/venv
+/models
+/__pycache__
+/.vscode
+test.py
+*.avi
+*.mpg
+*.mp4

@@ -24,20 +24,16 @@ with open('models/coco.names', 'r') as f:
 def vid(pathToFile):
     frame_index = 0
     frames_output = []
-
     if DEBUG >= 0:
         print(f"[INFO] Reading file {pathToFile}")
     cap = cv2.VideoCapture(pathToFile)
-
     folder_name = str(datetime.datetime.now()).replace(
         " ", "_")[:19].replace(":", "_")
     try:
         os.mkdir("output/" + folder_name)
-        if DEBUG >= 0:
-            print(f"Created folder /{folder_name}")
+        if DEBUG >= 0: print(f"Created folder /{folder_name}")
     except:
-        if DEBUG >= 0:
-            print(f"Can't create folder named {folder_name}")
+        if DEBUG >= 0:print(f"Can't create folder named {folder_name}")
 
     while(True):
         frame_index += 1
@@ -53,15 +49,10 @@ def vid(pathToFile):
                 start = time.time()
 
         if (frame_index-1) % jump == 0:
-            lista = analyse(frame, height, width)
-            if lista[0]:
-                frame = lista[1]
-                boxes = lista[2]
-                class_ids = lista[3]
-                confidences = lista[4]
-                indexes = lista[5]
-
-        putBoxes(frame, boxes, class_ids, confidences, indexes)
+            globals().update(analyse(frame, height, width))
+            print(boxes)
+        print(boxes)
+        if "FIRST_BOXES" in globals(): putBoxes(frame, boxes, class_ids, confidences, indexes)
 
         if (frame_index % 10 == 0):
             if (DEBUG >= 0):
@@ -71,8 +62,7 @@ def vid(pathToFile):
                 if DEBUG > 1:
                     progress(frame_index, cap.get(
                         cv2.CAP_PROP_FRAME_COUNT), "Processing video file")
-            sg.OneLineProgressMeter('Progressmeter', frame_index, cap.get(
-                cv2.CAP_PROP_FRAME_COUNT), 'key')
+            sg.OneLineProgressMeter('Progressmeter', frame_index, cap.get(cv2.CAP_PROP_FRAME_COUNT), 'key')
 
         if OUTPUT_PHOTOS:
             cv2.imwrite(f"output/{folder_name}/{frame_index}.png", frame)
@@ -120,6 +110,7 @@ def analyse(frame, height, width):
                 class_ids.append(class_id)
     if len(boxes) > 0:
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
+
         if DEBUG > 1:
             print(
                 f"BOXES:\n\t {boxes} \n\t len {len(boxes)} \n\t type {type(boxes)}")
@@ -128,9 +119,15 @@ def analyse(frame, height, width):
             print(
                 f"CONFIDENCES:\n\t {confidences} \n\t len {len(confidences)}\n\t type {type(confidences)}")
             print("="*30)
-        return [True, img, boxes, class_ids, confidences, indexes]
+        return {'GO_ON':True,
+                'FIRST_BOXES':True,
+                'frame': img,
+                'boxes': boxes,
+                'class_ids':class_ids,
+                'confidences':confidences,
+                'indexes':indexes}
     else:
-        return [False]
+        return {'GO_ON':False}
 
 
 def putBoxes(img, boxes, class_ids, confidences, indexes):
