@@ -1,5 +1,6 @@
 numpy==1.19.3
-opencv-python
+opencv-python==4.4.0.46
 progressbar2==3.53.1
+PySimpleGUI==4.32.1
 python-utils==2.4.0
 six==1.15.0
