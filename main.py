@@ -50,8 +50,6 @@ def vid(pathToFile):
 
         if (frame_index-1) % jump == 0:
             globals().update(analyse(frame, height, width))
-            print(boxes)
-        print(boxes)
         if "FIRST_BOXES" in globals(): putBoxes(frame, boxes, class_ids, confidences, indexes)
 
         if (frame_index % 10 == 0):
@@ -140,14 +138,19 @@ def putBoxes(img, boxes, class_ids, confidences, indexes):
             label = str(CLASSES[class_ids[i]])
             confidence = str(round(confidences[i], 2))
             person_counter += 1
+            if x<0:
+                x=0
+            if y<0:
+                y=0
+            cropped=img[y:y+h,x:x+w]
+            cv2.imshow('test',cropped.resize(150,150))
             if PUT_RECTANGLE:
                 cv2.rectangle(img, (x, y), (x+w, y+h), color, 2)
             if PUT_LABEL:
                 cv2.putText(img, label + " " + confidence,
                             (x, y+20), font, 0.8, (255, 255, 255), 2)
     if PUT_COUNTER:
-        cv2.putText(img, "people count: {:12}".format(
-            str(person_counter)), (50, 50), font, 1, (0, 255, 0), 4)
+        cv2.putText(img, f"people count: {str(person_counter)}", (50, 50), font, 1, (0, 255, 0), 4)
 
 
 def calculateColor(frame, x, y, w, h):  # TODO
