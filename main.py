@@ -21,7 +21,7 @@ with open('models/coco.names', 'r') as f:
     CLASSES = f.read().splitlines()
 
 
-def vid(pathToFile):
+def vid(pathToFile, save_folder):
     frame_index = 0
     frames_output = []
     if DEBUG >= 0:
@@ -50,20 +50,14 @@ def vid(pathToFile):
 
         if (frame_index-1) % jump == 0:
             globals().update(analyse(frame, height, width))
-        if "FIRST_BOXES" in globals(): putBoxes(frame, boxes, class_ids, confidences, indexes)
-
+        if "FIRST_BOXES" in globals(): 
+            putBoxes(frame, boxes, class_ids, confidences, indexes)
         if (frame_index % 10 == 0):
             if (DEBUG >= 0):
                 print("[INFO] ", frame_index, " frames analysed, speed=",
                       10/(time.time() - start), "fps", "  "*40)
                 start = time.time()
-                if DEBUG > 1:
-                    progress(frame_index, cap.get(
-                        cv2.CAP_PROP_FRAME_COUNT), "Processing video file")
             sg.OneLineProgressMeter('Progressmeter', frame_index, cap.get(cv2.CAP_PROP_FRAME_COUNT), 'key')
-
-        if OUTPUT_PHOTOS:
-            cv2.imwrite(f"output/{folder_name}/{frame_index}.png", frame)
         if OUTPUT_VIDEO:
             frames_output.append(frame)
     writeVideo(frames_output, folder_name, (width,height))
@@ -138,12 +132,12 @@ def putBoxes(img, boxes, class_ids, confidences, indexes):
             label = str(CLASSES[class_ids[i]])
             confidence = str(round(confidences[i], 2))
             person_counter += 1
-            if x<0:
-                x=0
-            if y<0:
-                y=0
-            cropped=img[y:y+h,x:x+w]
-            cv2.imshow('test',cropped.resize(150,150))
+            # if x<0: TODO
+            #     x=0
+            # if y<0:
+            #     y=0
+            # cropped=img[y:y+h,x:x+w]
+            # cv2.imshow('test',cropped.resize(150,150))
             if PUT_RECTANGLE:
                 cv2.rectangle(img, (x, y), (x+w, y+h), color, 2)
             if PUT_LABEL:
@@ -163,31 +157,17 @@ def calculateColor(frame, x, y, w, h):  # TODO
     return (255, 255, 255)
 
 
-def saveVideo(list_of_frames):
-    framesize = (list_of_frames[0].shape[1], list_of_frames[0].shape[0])
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video = cv2.VideoWriter(
-        'output.avi', cv2.VideoWriter_fourcc(*'DIVX'), 30, framesize)
-    for frame in list_of_frames:
-        video.write(frame)
-        cv2.imshow("test", frame)
-        cv2.waitKey(3)
-    video.release()
 
 
-def progress(count, total, status=''):
-    bar_len = 60
-    filled_len = int(round(bar_len * count / float(total)))
-
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
-
-    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
-
-
-def writeVideo(frames_list, folder, size):
-    out = cv2.VideoWriter(f"output/{folder}.avi", cv2.VideoWriter_fourcc(*'XVID'), 15, size)
+def writeVideo(frames_list, save_folder, size):
+    filename = str(datetime.datetime.now()).replace(" ", "_")[:19].replace(":", "_")
+    print('SAVE FOLDER =', save_folder)
+    print('save =', f"{save_folder}/{filename}.avi")
+    out = cv2.VideoWriter(f"{save_folder}/xd.avi", cv2.VideoWriter_fourcc(*'XVID'), 15, size)
     for frame in frames_list:   
         out.write(frame)
     out.release()
+
+
+while True:
+    vid('C:/Users/MrThe/OneDrive/Pulpit/vids/sample2.mpg','C:/Users/MrThe/OneDrive/Pulpit/vids') 
