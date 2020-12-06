@@ -234,8 +234,8 @@ def saveVideo(frames_list, save_folder, size):
 
 MODEL = 'yolov3'
 PATH = os.getcwd()
-WEIGHTS = f'{PATH}/models/{MODEL}/{MODEL}.weights'.replace("\\", "/")
-CFG = f'{PATH}/models/{MODEL}/{MODEL}.cfg'.replace("\\", "/")
+WEIGHTS = f'{PATH}/{MODEL}.weights'.replace("\\", "/")
+CFG = f'{PATH}/{MODEL}.cfg'.replace("\\", "/")
 SKIP = 5
 ONLY_PERSON = True
 FIRST_SUCCESS_DETECTION = False
@@ -246,7 +246,7 @@ ONCE = True
 model = cv2.dnn.readNet(WEIGHTS, CFG)
 model.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 
-with open('models/coco.names', 'r') as f:
+with open('coco.names', 'r') as f:
     CLASSES = f.read().splitlines()
 
 COLOR_WEIGHTS_3D = generateColorWeights(416,416)
