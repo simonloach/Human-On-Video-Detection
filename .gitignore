@@ -4,5 +4,4 @@
 *.avi
 *.mpg
 *.mp4
-coco.names
-yolov3.*
+yolov3.weights
