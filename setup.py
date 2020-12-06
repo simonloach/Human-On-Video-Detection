@@ -1,20 +1,22 @@
+import os
+
 try:
-    os.mkdir("output/")
+    os.mkdir("output")
     print("Created '/output")
         
 except:
-    print("Could not create '/output'")
+    print( "Could not create '/output'")
 
 try:
-    os.mkdir("/input")
+    os.mkdir("input")
     print("Created '/input'")
         
 except:
     print("Could not create '/input'")
 
 try:
-    os.mkdir("/models")
-    print("Created '/models'")
+    os.mkdir("models")
+    print("Created 'models'")
         
 except:
     print("Could not create '/models'")

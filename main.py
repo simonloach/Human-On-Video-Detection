@@ -16,59 +16,40 @@ WEIGHTS = f'{PATH}/models/{MODEL}/{MODEL}.weights'
 CFG = f'{PATH}/models/{MODEL}/{MODEL}.cfg'
 
 net = cv2.dnn.readNet(WEIGHTS, CFG)
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 
 with open('models/coco.names', 'r') as f:
     CLASSES = f.read().splitlines()
 
 
-def vid(pathToFile):
+def vid(pathToFile, save_folder):
     frame_index = 0
     frames_output = []
-    if DEBUG >= 0:
-        print(f"[INFO] Reading file {pathToFile}")
     cap = cv2.VideoCapture(pathToFile)
-    folder_name = str(datetime.datetime.now()).replace(
-        " ", "_")[:19].replace(":", "_")
-    try:
-        os.mkdir("output/" + folder_name)
-        if DEBUG >= 0: print(f"Created folder /{folder_name}")
-    except:
-        if DEBUG >= 0:print(f"Can't create folder named {folder_name}")
-
     while(True):
         frame_index += 1
         ret, frame = cap.read()
         if not ret:
-            if DEBUG >= 0:
-                print('[INFO] Last frame')
             break
 
         if frame_index == 1:
+            start = time.time()
+            copy = frame
             height, width, _ = frame.shape
-            if DEBUG >= 0:
-                start = time.time()
 
         if (frame_index-1) % jump == 0:
-            globals().update(analyse(frame, height, width))
-            print(boxes)
-        print(boxes)
-        if "FIRST_BOXES" in globals(): putBoxes(frame, boxes, class_ids, confidences, indexes)
+            globals().update(analyse(copy, height, width))
+        #print(globals())
+        if "FIRST_BOXES" in globals(): putBoxes(copy, boxes, class_ids, confidences, indexes)
 
         if (frame_index % 10 == 0):
             if (DEBUG >= 0):
-                print("[INFO] ", frame_index, " frames analysed, speed=",
-                      10/(time.time() - start), "fps", "  "*40)
-                start = time.time()
-                if DEBUG > 1:
-                    progress(frame_index, cap.get(
-                        cv2.CAP_PROP_FRAME_COUNT), "Processing video file")
+                print(frame_index)
             sg.OneLineProgressMeter('Progressmeter', frame_index, cap.get(cv2.CAP_PROP_FRAME_COUNT), 'key')
-
-        if OUTPUT_PHOTOS:
-            cv2.imwrite(f"output/{folder_name}/{frame_index}.png", frame)
         if OUTPUT_VIDEO:
-            frames_output.append(frame)
-    writeVideo(frames_output, folder_name, (width,height))
+            frames_output.append(copy)
+    cap.release()
+    writeVideo(frames_output, save_folder, (width,height))
     if DEBUG >= 0:
         print("[DONE] Finished processing!")
     return True
@@ -82,10 +63,9 @@ def analyse(frame, height, width):
     net.setInput(blob)
 
     output_layers_names = net.getUnconnectedOutLayersNames()
-    try:
-        layerOutputs = net.forward(output_layers_names)
-    except:
-        print('failed')
+    print("pre forward")
+    layerOutputs = net.forward(output_layers_names)
+    print("after forward")
 
     boxes = []
     confidences = []
@@ -160,31 +140,12 @@ def calculateColor(frame, x, y, w, h):  # TODO
     return (255, 255, 255)
 
 
-def saveVideo(list_of_frames):
-    framesize = (list_of_frames[0].shape[1], list_of_frames[0].shape[0])
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video = cv2.VideoWriter(
-        'output.avi', cv2.VideoWriter_fourcc(*'DIVX'), 30, framesize)
-    for frame in list_of_frames:
-        video.write(frame)
-        cv2.imshow("test", frame)
-        cv2.waitKey(3)
-    video.release()
-
-
-def progress(count, total, status=''):
-    bar_len = 60
-    filled_len = int(round(bar_len * count / float(total)))
-
-    percents = round(100.0 * count / float(total), 1)
-    bar = '=' * filled_len + '-' * (bar_len - filled_len)
-
-    sys.stdout.write('[%s] %s%s ...%s\r' % (bar, percents, '%', status))
-    sys.stdout.flush()
-
-
-def writeVideo(frames_list, folder, size):
-    out = cv2.VideoWriter(f"output/{folder}.avi", cv2.VideoWriter_fourcc(*'XVID'), 15, size)
+def writeVideo(frames_list, save_folder, size):
+    file_name = str(datetime.datetime.now()).replace(" ", "_")[:19].replace(":", "_")
+    out = cv2.VideoWriter(f"{save_folder}/{file_name}.avi", cv2.VideoWriter_fourcc(*'XVID'), 15, size)
     for frame in frames_list:   
         out.write(frame)
     out.release()
+
+while True:
+    vid('C:/Users/MrThe/OneDrive/Pulpit/vids/sample.mpg', 'C:/Users/MrThe/OneDrive/Pulpit/vids')
