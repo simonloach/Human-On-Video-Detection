@@ -1,5 +1,4 @@
-# IO2020
-##Instalation
+# IO2020 Instalation
 To start do steps listed below:
   1. ```git clone https://github.com/simonloach/IO2020.git```
   2. ```cd IO2020```
