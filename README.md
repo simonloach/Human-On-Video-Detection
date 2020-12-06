@@ -6,7 +6,6 @@ To start do steps listed below:
   5. Make sure your folder looks like that:
   ```
       IO2020
-      |   .gitignore
       |   backend.py
       |   coco.names
       |   gui.py
