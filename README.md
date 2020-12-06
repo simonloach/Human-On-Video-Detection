@@ -17,7 +17,8 @@ To start do steps listed below:
   5. ```pip install -r requirements.txt```
   6. Download YOLOv3 weights yolov3.weights file: https://pjreddie.com/media/files/yolov3.weights
   7. Make sure your folder looks like that:
-  ```IO2020
+  ```
+  IO2020
       |   backend.py
       |   gui.py
       |   README.md
@@ -27,4 +28,7 @@ To start do steps listed below:
       |   coco.names
       +---venv 
  ```     
-8. python gui.py
+8. 
+```bash
+python gui.py
+```
