@@ -6,6 +6,8 @@ import time
 import PySimpleGUI as sg
 import math
 
+
+
 def timing(f):
     '''
         Wrapper used for checking calculating the time to call a function. It prints the call time into console.
@@ -37,7 +39,8 @@ def loadVideo(input_file_path, output_path):
         input_file_path (str): Path to the input video file.
         output_path (str): Path to the output video folder.
     '''
-
+    LOG=""
+    RGB=[0,0,0]
     FRAME_LIST = []
     capture = cv2.VideoCapture(input_file_path)
     frame_id = 1
@@ -52,16 +55,17 @@ def loadVideo(input_file_path, output_path):
             globals().update(analyse(frame, height, width, model))
             sg.OneLineProgressMeter('Progressmeter', frame_id, capture.get(cv2.CAP_PROP_FRAME_COUNT), 'key')
         if FIRST_SUCCESS_DETECTION:
-            putBoxes(frame, 
+            RGB=putBoxes(frame, 
                     boxes,
                     class_ids,
                     confidences,
                     indexes)
+        LOG += f"[{frame_id}] frame has {RGB[0]} red people + {RGB[1]} green people + {RGB[2]} blue people = {RGB[0]+RGB[1]+RGB[2]} in total\n"
         frame_id = frame_id + 1
         FRAME_LIST.append(frame)
 
     capture.release()
-    saveVideo(FRAME_LIST, output_path, (width, height))
+    saveVideo(FRAME_LIST, output_path, (width, height), LOG)
 
 
 def analyse(frame, height, width, model):
@@ -132,6 +136,7 @@ def putBoxes(frame, boxes, class_ids, confidences, indexes):
     final_labels=[]
     person_counter = 0
     global ONCE
+    RGB = [0,0,0]
     for i in indexes.flatten():
         if (not ONLY_PERSON) or (str(CLASSES[class_ids[i]]) == 'person'):
             person_counter += 1
@@ -153,9 +158,14 @@ def putBoxes(frame, boxes, class_ids, confidences, indexes):
                                 })
     for box in final_boxes:
         cv2.rectangle(frame, box['pt1'], box['pt2'], box['color'], thickness=1)
+        if box['color'] == (255,0,0): RGB[0] += 1
+        elif box['color'] == (0,255,0): RGB[1] += 1
+        elif box['color'] == (0,0,255): RGB[2] += 1
+        
     for label in final_labels:
         cv2.putText(frame, label['text'], label['org'], label['fontFace'], label['fontScale'], label['color'], thickness=1)
     cv2.putText(frame, "people count: {:12}".format(str(person_counter)), (50, 50), cv2.FONT_HERSHEY_DUPLEX, 1, (255,20,147), 2)
+    return RGB
 
 
 def calculateColor(cropped_frame, weights_3d):
@@ -212,7 +222,7 @@ def generateColorWeights(height, width, translation_parameter=0.1):
     return array_3d
 
 
-def saveVideo(frames_list, save_folder, size):
+def saveVideo(frames_list, save_folder, size, log):
     '''
     Saves video into the save folder.
 
@@ -221,6 +231,7 @@ def saveVideo(frames_list, save_folder, size):
         frames_list (list): Video in a form of list of frames.
         save_folder (str): Path to the save folder ex. "C:/Users/zz/yy/ss"
         size (tuple): Size of our frames which also means resolution of a saved video.
+        log (str): String containing logs.
     '''
 
 
@@ -230,6 +241,8 @@ def saveVideo(frames_list, save_folder, size):
     for frame in frames_list:   
         out.write(frame)
     out.release()
+    with open(f'{save_folder}/{file_name}.log', 'w') as f:
+        f.write(log)
 
 
 MODEL = 'yolov3'

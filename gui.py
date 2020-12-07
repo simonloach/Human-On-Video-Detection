@@ -39,10 +39,11 @@ class GUI:
                         self.path_to_file = values['input_file']
                         self.path_to_save = values['output_folder']
                         loadVideo(values['input_file'], values['output_folder'])
-                        sg.popup(f"Saved file in {values['output_folder']}")
+                        sg.popup(f"Saved analysed file and log file and  in {values['output_folder']}")
                     else:
                         sg.popup('Wrong input file extension')
                 else:
                     sg.popup("Not a valid input file path")     
         window.close()
+        
 GUI()
