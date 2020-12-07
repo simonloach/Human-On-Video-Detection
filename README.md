@@ -11,7 +11,7 @@ To start do steps listed below:
       ./venv/Scripts/activate.bat
       ```
       ```bash
-      . /venv/Scripts/activate
+      . venv/Scripts/activate
       ```
       
   5. ```pip install -r requirements.txt```
