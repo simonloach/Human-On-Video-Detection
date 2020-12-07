@@ -1,5 +1,13 @@
+# IO2020 Prerequisities
+1. [Python (3.8.6 - 3.9 were using during implementation)](https://www.python.org/downloads/)
+2. [pip](https://pip.pypa.io/en/stable/installing/) (Should get installed with Python on default)
+3. [Git](https://git-scm.com/downloads)
+
+
 # IO2020 Instalation
-To start do steps listed below:
+To start do steps listed below assuming you are familiar with usage of GitBash. If not here is a [Git manual](https://git-scm.com/book/en/v2)
+
+
   1. ```git clone https://github.com/simonloach/IO2020.git```
   2. ```cd IO2020```
   3. ```python -m venv venv```
