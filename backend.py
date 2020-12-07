@@ -27,7 +27,7 @@ def timing(f):
     return wrap
 
 
-def loadVideo(input_file_path, output_path, SKIP):
+def loadVideo(input_file_path, output_path, skip_parameter):
     '''
     Main function that loads video file, splits it into frames and forwards them into the analyse()
     function. Then depending on the result and frequency of our analysis function putBoxes() can be
@@ -38,6 +38,7 @@ def loadVideo(input_file_path, output_path, SKIP):
     Parameters:
         input_file_path (str): Path to the input video file.
         output_path (str): Path to the output video folder.
+        skip_parameter (int): Frequency of analysis in term of frames.
     '''
     LOG=""
     RGB=[0,0,0]
@@ -51,7 +52,7 @@ def loadVideo(input_file_path, output_path, SKIP):
             break
         if frame_id==1:
             height, width, _ = frame.shape
-        if (frame_id) % SKIP == 0:
+        if (frame_id) % skip_parameter == 0:
             globals().update(analyse(frame, height, width, model))
             sg.OneLineProgressMeter('Progressmeter', frame_id, capture.get(cv2.CAP_PROP_FRAME_COUNT), 'key')
         if FIRST_SUCCESS_DETECTION:
