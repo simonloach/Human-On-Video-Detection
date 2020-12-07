@@ -14,6 +14,7 @@ class GUI:
     layout = [[sg.Text('Document to open')],
                 [sg.Text('Input File', justification='r', size=(15,1)),sg.Input(key='input_file'), sg.FileBrowse(target='input_file')],
                 [sg.Text('Output Folder:', justification='r', size=(15,1)),sg.Input(key='output_folder'), sg.FolderBrowse(target='output_folder')],
+                [sg.Checkbox('Skip', size=(10,1),key='skip', default=True), sg.InputCombo(('1', '3', '5', '10'), size=(20, 1), default_value=5,key='skip_value')],
                 [sg.Open(), sg.Cancel()]]
 
     def __init__(self):
@@ -38,7 +39,14 @@ class GUI:
                     if values['input_file'].lower().endswith(('.mpg', '.mp4')):
                         self.path_to_file = values['input_file']
                         self.path_to_save = values['output_folder']
-                        loadVideo(values['input_file'], values['output_folder'])
+                        if (values['skip']):
+                            try:
+                                if int(values['skip_value']) < 100: loadVideo(values['input_file'], values['output_folder'], int(values['skip_value']))
+                                else: raise TypeError
+                            except TypeError:
+                                sg.popup(f"Wrong skip parameter, must be a number smaller than 100!")
+                        else:
+                            loadVideo(values['input_file'], values['output_folder'], 1)
                         sg.popup(f"Saved analysed file and log file and  in {values['output_folder']}")
                     else:
                         sg.popup('Wrong input file extension')

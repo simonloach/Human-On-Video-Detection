@@ -27,7 +27,7 @@ def timing(f):
     return wrap
 
 
-def loadVideo(input_file_path, output_path):
+def loadVideo(input_file_path, output_path, SKIP):
     '''
     Main function that loads video file, splits it into frames and forwards them into the analyse()
     function. Then depending on the result and frequency of our analysis function putBoxes() can be
@@ -249,7 +249,6 @@ MODEL = 'yolov3'
 PATH = os.getcwd()
 WEIGHTS = f'{PATH}/{MODEL}.weights'.replace("\\", "/")
 CFG = f'{PATH}/{MODEL}.cfg'.replace("\\", "/")
-SKIP = 5
 ONLY_PERSON = True
 FIRST_SUCCESS_DETECTION = False
 
