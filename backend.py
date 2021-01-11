@@ -61,7 +61,7 @@ def loadVideo(input_file_path, output_path, skip_parameter):
                     class_ids,
                     confidences,
                     indexes)
-        LOG += f"[{frame_id}] frame has {RGB[0]} red people + {RGB[1]} green people + {RGB[2]} blue people = {RGB[0]+RGB[1]+RGB[2]} in total\n"
+        LOG += f"[{frame_id}] frame has {RGB[0]} blue people + {RGB[1]} green people + {RGB[2]} red people = {RGB[0]+RGB[1]+RGB[2]} in total\n"
         frame_id = frame_id + 1
         FRAME_LIST.append(frame)
 

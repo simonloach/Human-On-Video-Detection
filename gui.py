@@ -35,23 +35,29 @@ class GUI:
                 break
 
             if event=='Open':
-                if os.path.isfile(values['input_file']):
+                if os.path.isfile(values['input_file']) and os.path.isdir(values['output_folder']):
                     if values['input_file'].lower().endswith(('.mpg', '.mp4')):
                         self.path_to_file = values['input_file']
                         self.path_to_save = values['output_folder']
                         if (values['skip']):
                             try:
-                                if int(values['skip_value']) < 100: loadVideo(values['input_file'], values['output_folder'], int(values['skip_value']))
-                                else: raise TypeError
-                            except TypeError:
-                                sg.popup(f"Wrong skip parameter, must be a number smaller than 100!")
+                                if 20 > int(values['skip_value']) > 0:
+                                    try:
+                                        if int(values['skip_value']) < 100: loadVideo(values['input_file'], values['output_folder'], int(values['skip_value']))
+                                        else: raise TypeError
+                                    except TypeError:
+                                        sg.popup(f"Wrong skip parameter, must be a number smaller than 100!")
+                                else: 
+                                    sg.popup('Wrong skip value')
+                            except:
+                                sg.popup('Not a valid number in skip_value')
                         else:
                             loadVideo(values['input_file'], values['output_folder'], 1)
                         sg.popup(f"Saved analysed file and log file and  in {values['output_folder']}")
                     else:
                         sg.popup('Wrong input file extension')
                 else:
-                    sg.popup("Not a valid input file path")     
+                    sg.popup("Not a valid input file path")
         window.close()
         
 GUI()
